@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Bazaar Hub</title>
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+        header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        .book-listing {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .book {
+            background: #fff;
+            padding: 15px;
+            width: 200px;
+            box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .book img {
+            width: 100%;
+            height: auto;
+        }
+        .order-form {
+            margin-top: 20px;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-bar input {
+            padding: 10px;
+            width: 300px;
+        }
+        .search-bar button {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Book Bazaar Hub</h1>
+    </header>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Search for books...">
+            <button onclick="searchBooks()">Search</button>
+        </div>
+        
+        <h2>Available Books</h2>
+        <div class="book-listing" id="bookList">
+            <div class="book">
+                <img src="book-cover.jpg" alt="Book Cover">
+                <h3>Book Title</h3>
+                <p>Author: John Doe</p>
+                <p>Price: $10</p>
+                <div id="paypal-button-container"></div>
+            </div>
+        </div>
+        
+        <h2>Sell Your Book</h2>
+        <form class="order-form">
+            <label>Book Title:</label>
+            <input type="text" required><br>
+            <label>Author:</label>
+            <input type="text" required><br>
+            <label>Price:</label>
+            <input type="number" required><br>
+            <label>Upload Image:</label>
+            <input type="file"><br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script>
+        function searchBooks() {
+            let query = document.getElementById('search').value.toLowerCase();
+            let books = document.querySelectorAll('.book');
+            books.forEach(book => {
+                let title = book.querySelector('h3').innerText.toLowerCase();
+                if (title.includes(query)) {
+                    book.style.display = "block";
+                } else {
+                    book.style.display = "none";
+                }
+            });
+        }
+        
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '10.00'
+                        }
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    alert('Transaction completed by ' + details.payer.name.given_name);
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+</body>
+</htm
